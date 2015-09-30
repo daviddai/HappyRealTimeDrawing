@@ -1,5 +1,7 @@
 var lastX = -1;
 var lastY = -1;
+var otherLastX = -1;
+var otherLastY = -1;
 var isDrawing = false;
 var queue = [];
 
@@ -76,24 +78,37 @@ function updateWhiteBoard(currentX, currentY) {
 function updateWhiteBoardFromServer(coordinates) {
     var ctx = document.getElementById("myWhiteBoard").getContext("2d");
     var coordinates = JSON.parse(coordinates);
-    var lastX, lastY, currentX, currentY;
-    
-    for (var i = 1; i < coordinates.length; ++i) {
-        lastX = coordinates[i - 1]['x'];
-        lastY = coordinates[i - 1]['y'];     
-        
-        if (lastX == -1 && lastY == -1) {
-            continue;
-        } else {
-            currentX = coordinates[i]['x'];
-            currentY = coordinates[i]['y'];
+    var otherCurrentX, otherCurrentY;
 
-            if (currentX == -1 && currentY == -1) {
-                continue;
-            }
-            draw(ctx, lastX, lastY, currentX, currentY); 
+    if (otherLastX != -1 && otherLastY != -1) {
+        if (coordinates[0]['x'] != -1 && coordinates[0]['y'] != -1) {
+            draw(ctx, otherLastX, otherLastY, coordinates[0]['x'], coordinates[0]['y']);
         }
     }
+    
+    for (var i = 0; i < coordinates.length; ++i) {
+        otherLastX = coordinates[i]['x'];
+        otherLastY = coordinates[i]['y'];     
+        
+        if (otherLastX == -1 && otherLastY == -1) {
+            continue;
+        } else {
+            if (i + 1 >= coordinates.length) {
+                return;
+            }
+            otherCurrentX = coordinates[i + 1]['x'];
+            otherCurrentY = coordinates[i + 1]['y'];
+
+            if (otherCurrentX == -1 && otherCurrentY == -1) {
+                continue;
+            }
+
+            draw(ctx, otherLastX, otherLastY, otherCurrentX, otherCurrentY); 
+        }
+    }
+    
+    otherLastX = otherCurrentX;
+    otherLastY = otherCurrentY;
 }
 
 function draw(ctx, lastX, lastY, currentX, currentY) {
