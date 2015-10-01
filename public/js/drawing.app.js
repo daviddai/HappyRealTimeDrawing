@@ -111,8 +111,15 @@ function updateWhiteBoardFromServer(coordinates) {
     otherLastY = otherCurrentY;
 }
 
+function setStyle(ctx) {
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#659b41";
+}
+
 function draw(ctx, lastX, lastY, currentX, currentY) {
     console.log("(" + lastX + ", " + lastY + ") to (" + currentX + ", " + currentY + ")");
+    setStyle(ctx);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(currentX, currentY);
