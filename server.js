@@ -37,6 +37,15 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
+    socket.on('clear', function() {
+        clients.forEach(function(client) {
+            if (client != socket) {
+                console.log('Server Log: About to erase the whole board');    
+                client.emit('clear');
+            }
+        });
+    });
+
     socket.on('message', function(data) {
 
     });

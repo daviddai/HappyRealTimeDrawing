@@ -9,7 +9,8 @@ $(document).ready(function() {
     connectToServer();
     
     $("#myWhiteBoard").hover(function() {
-        $(this).css("cursor", "pointer");
+        $(this).css('cursor', 'crosshair');
+        //$(this).css('cursor','url(./public/img/pencil.png),auto');
     });
 
     $("#myWhiteBoard").mousedown(function(e) {
@@ -38,15 +39,13 @@ $(document).ready(function() {
     });
 
     $("#btnClear").click(function(e) {
-        var ctx = document.getElementById("myWhiteBoard").getContext("2d");
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        reset();
+        clearWhiteBoard(INTERNAL_REQUEST);     
     });
 
     setInterval(function() {
        var pivot = queue.length;
        if (pivot > 0) {
-           send(queue.slice(0, pivot));
+           sendCoordinates(queue.slice(0, pivot));
            queue.splice(0, pivot);
        }
     }, 100);
@@ -56,6 +55,18 @@ $(document).ready(function() {
 function reset() {
     lastX = -1;
     lastY = -1;
+}
+
+function clearWhiteBoard(requestType) {
+    var ctx = document.getElementById("myWhiteBoard").getContext("2d");
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    reset();
+
+    if (requestType == INTERNAL_REQUEST) {
+        sendClearRequest();
+    } else if (requestType == SERVER_REQUEST) {
+        showNotification(CLEAR_NOTIFICATION);
+    }
 }
 
 function updateWhiteBoard(currentX, currentY) {

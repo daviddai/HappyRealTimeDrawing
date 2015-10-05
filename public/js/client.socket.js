@@ -11,11 +11,19 @@ function connectToServer() {
         updateWhiteBoardFromServer(coordinates);
     });
 
+    socket.on('clear', function() {
+        clearWhiteBoard(SERVER_REQUEST);       
+    });
+
     socket.on('disconnect', function() {
         alert('Lost connection to server');
     });
 }
 
-function send(coordinates) {
+function sendCoordinates(coordinates) {
     socket.emit('coordinates', JSON.stringify(coordinates));
+}
+
+function sendClearRequest() {
+    socket.emit('clear');
 }
