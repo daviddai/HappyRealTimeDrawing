@@ -17,6 +17,7 @@ var options = collectCmdLineArgs();
 var server = app.listen(options['port']);
 var io = io.listen(server);
 var clients = [];
+var history = [];
 
 io.sockets.on('connection', function(socket) {
     console.log("Server Log: A new user connected...");
@@ -24,11 +25,19 @@ io.sockets.on('connection', function(socket) {
     clients.push(socket);
     socket.emit('greeting', 'Welcome!');
 
+    // send history to new connected user
+    for (var i = 0; i < history.length; ++i) {
+        socket.emit('coordinates', history[i]);
+    }
+
     socket.on('disconnect', function(socket) {
         console.log("Server Log: A user disconnected...");
     });
 
     socket.on('coordinates', function(coordinates) {
+        // record in history
+        history.push(coordinates);
+
         clients.forEach(function(client) {
             if (client != socket) {
                 console.log("Server Log: About to update other's white board");
@@ -38,6 +47,8 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('clear', function() {
+        history = [];
+
         clients.forEach(function(client) {
             if (client != socket) {
                 console.log('Server Log: About to erase the whole board');    
