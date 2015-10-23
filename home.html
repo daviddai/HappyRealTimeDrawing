@@ -10,9 +10,16 @@
     <link rel="stylesheet" media="screen" type="text/css" href="./public/css/colorpicker.css" /> 
 	<style>
 		#myWhiteBoard {
-			width: 800px;
-			height: 600px;
-			border: 1px solid black
+			position: relative;
+			z-index: 1;
+		}
+
+		#cursor {
+			position: absolute;
+			z-index: 2;
+			display: none;
+			width: 120px;
+			height: 120px;
 		}
 	</style>
 </head>
@@ -20,9 +27,10 @@
     <div align="center">
         <br>
         <br>
-        <canvas id="myWhiteBoard">
+        <canvas id="myWhiteBoard" width="800px" height="600px" style="border: 1px solid black">
 			I am sorry, your browser does NOT support canvas.	
 		</canvas>
+		<div id="cursor"></div>
         <br>
         <br>
         <input id="btnClear" type="button" value="Clear"></input>

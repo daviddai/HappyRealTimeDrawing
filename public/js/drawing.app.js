@@ -8,10 +8,14 @@ var queue = [];
 $(document).ready(function() {
     connectToServer();
     
-    $("#myWhiteBoard").hover(function() {
+    /*$("#myWhiteBoard").hover(function() {
         $(this).css('cursor', 'crosshair');
-        //$(this).css('cursor','url(./public/img/pencil.png),auto');
-    });
+    });*/
+
+	$("#myWhiteBoard").mouseenter(function(e) {
+		$("#cursor").css("background", "url('public/img/pencil.png')");
+		$("#cursor").show();
+	});
 
     $("#myWhiteBoard").mousedown(function(e) {
         isDrawing = true;
@@ -26,7 +30,13 @@ $(document).ready(function() {
             var y = e.pageY - this.offsetTop;
             updateWhiteBoard(x, y);
         }
+
+		$("#cursor").css("left", e.pageX).css("top", e.pageY);
     });
+
+	$("#cursor").mousemove(function(e) {
+		$("#cursor").css("left", e.pageX).css("top", e.pageY);
+	});
 
     $("#myWhiteBoard").mouseup(function(e) {
         isDrawing = false;
@@ -35,6 +45,7 @@ $(document).ready(function() {
 
     $("#myWhiteBoard").mouseleave(function(e) {
         isDrawing = false;
+		$("#cursor").hide();
         reset();
     });
 
