@@ -24,28 +24,46 @@ $(document).ready(function() {
         updateWhiteBoard(x, y);
     });
 
+    $("#cursor").mousedown(function(e) {
+       isDrawing = true; 
+       var x = e.pageX - $("#myWhiteBoard").offset().left;
+       var y = e.pageY - $("#myWhiteBoard").offset().top;
+       updateWhiteBoard(x, y);
+
+    });
+
     $("#myWhiteBoard").mousemove(function(e) {
+        console.log(isDrawing);
         if (isDrawing) {
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
             updateWhiteBoard(x, y);
         }
 
-		$("#cursor").css("left", e.pageX).css("top", e.pageY);
+		$("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+    });
+
+    $("#cursor").mousemove(function(e) {
+        console.log("cursor " + isDrawing);
+        if (isDrawing) {
+            var x = e.pageX - $("#myWhiteBoard").offset().left;
+            var y = e.pageY - $("#myWhiteBoard").offset().top;
+            updateWhiteBoard(x, y);
+        }
     });
 
 	$("#cursor").mousemove(function(e) {
-		$("#cursor").css("left", e.pageX).css("top", e.pageY);
+		$("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
 	});
 
-    $("#myWhiteBoard").mouseup(function(e) {
+    $("#myWhiteBoard, #cursor").mouseup(function(e) {
         isDrawing = false;
         reset();
     });
 
     $("#myWhiteBoard").mouseleave(function(e) {
-        isDrawing = false;
-		$("#cursor").hide();
+        //isDrawing = false;
+		//$("#cursor").hide();
         reset();
     });
 
