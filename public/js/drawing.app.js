@@ -12,10 +12,10 @@ $(document).ready(function() {
         $(this).css('cursor', 'crosshair');
     });*/
 
-	$("#myWhiteBoard").mouseenter(function(e) {
-		$("#cursor").css("background", "url('public/img/pencil.png')");
-		$("#cursor").show();
-	});
+    $("#myWhiteBoard").mouseenter(function(e) {
+        $("#cursor").css("background", "url('public/img/pencil.png')");
+	$("#cursor").show();
+    });
 
     $("#myWhiteBoard").mousedown(function(e) {
         isDrawing = true;
@@ -33,28 +33,24 @@ $(document).ready(function() {
     });
 
     $("#myWhiteBoard").mousemove(function(e) {
-        console.log(isDrawing);
         if (isDrawing) {
             var x = e.pageX - this.offsetLeft;
             var y = e.pageY - this.offsetTop;
             updateWhiteBoard(x, y);
         }
 
-		$("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+	$("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
     });
 
     $("#cursor").mousemove(function(e) {
-        console.log("cursor " + isDrawing);
         if (isDrawing) {
             var x = e.pageX - $("#myWhiteBoard").offset().left;
             var y = e.pageY - $("#myWhiteBoard").offset().top;
             updateWhiteBoard(x, y);
         }
-    });
 
-	$("#cursor").mousemove(function(e) {
-		$("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
-	});
+        $("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+    });
 
     $("#myWhiteBoard, #cursor").mouseup(function(e) {
         isDrawing = false;
@@ -63,7 +59,7 @@ $(document).ready(function() {
 
     $("#myWhiteBoard").mouseleave(function(e) {
         //isDrawing = false;
-		//$("#cursor").hide();
+	//$("#cursor").hide();
         reset();
     });
 
