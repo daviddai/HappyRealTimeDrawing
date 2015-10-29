@@ -2,20 +2,33 @@ var lastX = -1;
 var lastY = -1;
 var otherLastX = -1;
 var otherLastY = -1;
+var mode = MODE_DRAW;
 var isDrawing = false;
+var isEarsing = false;
 var queue = [];
 
 $(document).ready(function() {
     connectToServer();
 
+    $("#mode").change(function() {
+        mode = $("#mode option:selected").val();
+    });
+
     $("#myWhiteBoard").mouseenter(function(e) {
         $("body").css("cursor", "none");
-        $("#cursor").css("background", "url('public/img/pencil.png')");
-	    $("#cursor").show();
+        
+        if (mode == MODE_DRAW) {
+            $("#cursor").css("background", "url('public/img/pencil.png')");
+	        $("#cursor").show();
+        } else {
+            $("#eraser").show();
+        }
     });
 
     $("#myWhiteBoard").mousedown(function(e) {
-        isDrawing = true;
+        isDrawing = (mode == MODE_DRAW);
+        isErasing = !isDrawing;
+
         var x = e.pageX - this.offsetLeft;
         var y = e.pageY - this.offsetTop;
         updateWhiteBoard(x, y);
@@ -35,8 +48,12 @@ $(document).ready(function() {
             var y = e.pageY - this.offsetTop;
             updateWhiteBoard(x, y);
         }
-
-	    $("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+        
+        if (mode == MODE_DRAW) {
+	        $("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+        } else {
+            $("#eraser").css("left", e.pageX - 6).css("top", e.pageY - 115);
+        }
     });
 
     $("#cursor").mousemove(function(e) {
@@ -94,19 +111,24 @@ function clearWhiteBoard(requestType) {
 
 function updateWhiteBoard(currentX, currentY) {
     var ctx = document.getElementById("myWhiteBoard").getContext("2d");
-    if (lastX == -1 && lastY == -1) {
-        enqueue(lastX, lastY);
-        lastX = currentX - 1;
-        lastY = currentY - 1;
-        enqueue(lastX, lastY);
-    }
-
-    enqueue(currentX, currentY);
     
-    draw(ctx, lastX, lastY, currentX, currentY);
-
-    lastX = currentX;
-    lastY = currentY;
+    if (isDrawing) {
+        if (lastX == -1 && lastY == -1) {
+            enqueue(lastX, lastY);
+            lastX = currentX - 1;
+            lastY = currentY - 1;
+            enqueue(lastX, lastY);
+        }
+        // record new coordinates
+        enqueue(currentX, currentY);
+        // draw new coordinates 
+        draw(ctx, lastX, lastY, currentX, currentY);
+        // update last coordinates
+        lastX = currentX;
+        lastY = currentY;
+    } else {
+        
+    }
 }
 
 function updateWhiteBoardFromServer(coordinates) {

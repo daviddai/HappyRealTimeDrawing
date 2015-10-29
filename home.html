@@ -1,10 +1,10 @@
 <html>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+    <script src="./public/js/global.variable.js"></script>
     <script src="./public/js/client.socket.js"></script>
     <script src="./public/js/drawing.app.js"></script>
     <script src="./public/js/socket.io.js"></script>
-    <script src="./public/js/global.variable.js"></script>
     <script src="./public/js/notify.js"></script>
     <script src="./public/js/notification.js"></script>
     <link rel="stylesheet" media="screen" type="text/css" href="./public/css/colorpicker.css" /> 
@@ -21,6 +21,16 @@
 			width: 120px;
 			height: 120px;
 		}
+
+        #eraser {
+            display: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border: 3px solid black;
+            position: absolute;
+            z-index: 1;
+        }
 	</style>
 </head>
 <body>
@@ -31,10 +41,15 @@
 			I am sorry, your browser does NOT support canvas.	
 		</canvas>
 		<div id="cursor"></div>
+        <div id="eraser"></div>
         <br>
         <br>
         <input id="btnClear" type="button" value="Clear"></input>
         <hr>
+        <select id="mode">
+            <option value="0">Draw</option>
+            <option value="1">Erase</option>
+        </select>
     </div>
 </body>
 </html>
