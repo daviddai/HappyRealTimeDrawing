@@ -9,8 +9,9 @@ $(document).ready(function() {
     connectToServer();
 
     $("#myWhiteBoard").mouseenter(function(e) {
+        $("body").css("cursor", "none");
         $("#cursor").css("background", "url('public/img/pencil.png')");
-	$("#cursor").show();
+	    $("#cursor").show();
     });
 
     $("#myWhiteBoard").mousedown(function(e) {
@@ -56,6 +57,7 @@ $(document).ready(function() {
     $("#myWhiteBoard").mouseleave(function(e) {
         isDrawing = false;
         $("#cursor").hide();
+        $("body").css("cursor", "default");
         reset();
     });
 
