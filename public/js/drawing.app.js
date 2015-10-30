@@ -12,68 +12,64 @@ $(document).ready(function() {
 
     $("#mode").change(function() {
         mode = $("#mode option:selected").val();
+
+        if (mode == MODE_DRAW) {
+            $("#tool").removeClass("eraser").addClass("cursor");
+        } else {
+            $("#tool").removeClass("cursor").addClass("eraser"); 
+        }
     });
 
     $("#myWhiteBoard").mouseenter(function(e) {
         $("body").css("cursor", "none");
-        
-        if (mode == MODE_DRAW) {
-            $("#cursor").css("background", "url('public/img/pencil.png')");
-	        $("#cursor").show();
-        } else {
-            $("#eraser").show();
-        }
+        $("#tool").show();
     });
 
     $("#myWhiteBoard").mousedown(function(e) {
+        // update mode
         isDrawing = (mode == MODE_DRAW);
         isErasing = !isDrawing;
 
-        var x = e.pageX - this.offsetLeft;
-        var y = e.pageY - this.offsetTop;
-        updateWhiteBoard(x, y);
+        var coordinates = getCoordinates(e, $(this).attr("id"));
+        updateWhiteBoard(coordinates[0], coordinates[1]);
     });
 
-    $("#cursor").mousedown(function(e) {
-       isDrawing = true; 
-       var x = e.pageX - $("#myWhiteBoard").offset().left;
-       var y = e.pageY - $("#myWhiteBoard").offset().top;
-       updateWhiteBoard(x, y);
-
+    $("#tool").mousedown(function(e) {
+        /*isDrawing = (mode == MODE_DRAW);
+        isErasing = !isDrawing;
+        // calculate coordinates on white board
+        var x = e.pageX - $("#myWhiteBoard").offset().left;
+        var y = e.pageY - $("#myWhiteBoard").offset().top;
+        updateWhiteBoard(x, y); */
     });
 
     $("#myWhiteBoard").mousemove(function(e) {
-        if (isDrawing) {
-            var x = e.pageX - this.offsetLeft;
-            var y = e.pageY - this.offsetTop;
-            updateWhiteBoard(x, y);
-        }
+        var coordinates = getCoordinates(e, $(this).attr("id"));
+        updateWhiteBoard(coordinates[0], coordinates[1]);
         
         if (mode == MODE_DRAW) {
-	        $("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+	        $("#tool").css("left", e.pageX - 6).css("top", e.pageY - 115);
         } else {
-            $("#eraser").css("left", e.pageX - 6).css("top", e.pageY - 115);
+            $("#tool").css("left", e.pageX - 6).css("top", e.pageY - 115);
         }
     });
 
-    $("#cursor").mousemove(function(e) {
-        if (isDrawing) {
-            var x = e.pageX - $("#myWhiteBoard").offset().left;
-            var y = e.pageY - $("#myWhiteBoard").offset().top;
-            updateWhiteBoard(x, y);
-        }
-
-        $("#cursor").css("left", e.pageX - 6).css("top", e.pageY - 115);
+    $("#tool").mousemove(function(e) {
+        /*var x = e.pageX - $("#myWhiteBoard").offset().left;
+        var y = e.pageY - $("#myWhiteBoard").offset().top;
+        updateWhiteBoard(x, y);
+        
+        if (mode == MODE_DRAW) {
+            $("#tool").css("left", e.pageX - 6).css("top", e.pageY - 115);
+        }*/
     });
 
-    $("#myWhiteBoard, #cursor").mouseup(function(e) {
-        isDrawing = false;
-        reset();
+    $("#myWhiteBoard, #tool").mouseup(function(e) {
+       reset();
     });
 
     $("#myWhiteBoard").mouseleave(function(e) {
-        isDrawing = false;
-        $("#cursor").hide();
+        $("#tool").hide();
         $("body").css("cursor", "default");
         reset();
     });
@@ -92,9 +88,18 @@ $(document).ready(function() {
 
 });
 
+function getCoordinates(e, elementId) {
+    var x = e.pageX - $("#" + elementId).offset().left;
+    var y = e.pageY - $("#" + elementId).offset().top;
+    return [x, y];
+}
+
 function reset() {
     lastX = -1;
     lastY = -1;
+    
+    isDrawing = false;
+    isEarsing = false;
 }
 
 function clearWhiteBoard(requestType) {

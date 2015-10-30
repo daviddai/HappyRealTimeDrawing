@@ -14,15 +14,16 @@
 			z-index: 2;
 		}
 
-		#cursor {
+		.cursor {
 			position: absolute;
 			z-index: 1;
 			display: none;
 			width: 120px;
 			height: 120px;
+            background: url('public/img/pencil.png');
 		}
 
-        #eraser {
+        .eraser {
             display: none;
             border-radius: 50%;
             width: 50px;
@@ -40,8 +41,7 @@
         <canvas id="myWhiteBoard" width="800px" height="600px" style="border: 1px solid black">
 			I am sorry, your browser does NOT support canvas.	
 		</canvas>
-		<div id="cursor"></div>
-        <div id="eraser"></div>
+		<div id="tool" class="cursor"></div>
         <br>
         <br>
         <input id="btnClear" type="button" value="Clear"></input>
