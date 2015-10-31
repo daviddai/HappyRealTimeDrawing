@@ -10,13 +10,13 @@
     <link rel="stylesheet" media="screen" type="text/css" href="./public/css/colorpicker.css" /> 
 	<style>
 		#myWhiteBoard {
-			position: relative;
-			z-index: 2;
+			position: absolute;
+			z-index: 1;
 		}
 
 		.cursor {
 			position: absolute;
-			z-index: 1;
+			z-index: 2;
 			display: none;
 			width: 120px;
 			height: 120px;
@@ -30,7 +30,15 @@
             height: 50px;
             border: 3px solid black;
             position: absolute;
-            z-index: 1;
+            z-index: 2;
+        }
+
+        #sensor {
+            background-color: green;
+            width: 800px;
+            height: 600px;
+            position: relative;
+            z-index: 3;
         }
 	</style>
 </head>
@@ -38,10 +46,17 @@
     <div align="center">
         <br>
         <br>
-        <canvas id="myWhiteBoard" width="800px" height="600px" style="border: 1px solid black">
-			I am sorry, your browser does NOT support canvas.	
-		</canvas>
-		<div id="tool" class="cursor"></div>
+        <table width="800px" height="600px">
+            <tr>
+                <td>
+                    <canvas id="myWhiteBoard" width="800px" height="600px" style="border: 1px solid black">
+			            I am sorry, your browser does NOT support canvas.	
+		            </canvas>
+                    <div id="sensor"></div>
+		            <!--<div id="tool" class="cursor"></div>-->
+                </td>
+            </tr>
+        </table>
         <br>
         <br>
         <input id="btnClear" type="button" value="Clear"></input>
