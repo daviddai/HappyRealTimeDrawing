@@ -20,17 +20,17 @@ $(document).ready(function() {
         }
     });
 
-    $("#myWhiteBoard").mouseenter(function(e) {
+    $("#sensor").mouseenter(function(e) {
         $("body").css("cursor", "none");
         $("#tool").show();
     });
 
-    $("#myWhiteBoard").mousedown(function(e) {
+    $("#sensor").mousedown(function(e) {
         // update mode
         isDrawing = (mode == MODE_DRAW);
         isErasing = !isDrawing;
 
-        var coordinates = getCoordinates(e, $(this).attr("id"));
+        var coordinates = getCoordinates(e, "myWhiteBoard");
         updateWhiteBoard(coordinates[0], coordinates[1]);
     });
 
@@ -43,8 +43,8 @@ $(document).ready(function() {
         updateWhiteBoard(x, y); */
     });
 
-    $("#myWhiteBoard").mousemove(function(e) {
-        var coordinates = getCoordinates(e, $(this).attr("id"));
+    $("#sensor").mousemove(function(e) {
+        var coordinates = getCoordinates(e, "myWhiteBoard");
         updateWhiteBoard(coordinates[0], coordinates[1]);
         
         if (mode == MODE_DRAW) {
@@ -64,11 +64,11 @@ $(document).ready(function() {
         }*/
     });
 
-    $("#myWhiteBoard, #tool").mouseup(function(e) {
+    $("#sensor").mouseup(function(e) {
        reset();
     });
 
-    $("#myWhiteBoard").mouseleave(function(e) {
+    $("#sensor").mouseleave(function(e) {
         $("#tool").hide();
         $("body").css("cursor", "default");
         reset();

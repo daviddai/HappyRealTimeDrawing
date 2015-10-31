@@ -15,9 +15,9 @@
 		}
 
 		.cursor {
+            display: none;
 			position: absolute;
 			z-index: 2;
-			display: none;
 			width: 120px;
 			height: 120px;
             background: url('public/img/pencil.png');
@@ -34,11 +34,11 @@
         }
 
         #sensor {
-            background-color: green;
             width: 800px;
             height: 600px;
             position: relative;
             z-index: 3;
+            opacity: 0.4;
         }
 	</style>
 </head>
@@ -53,7 +53,7 @@
 			            I am sorry, your browser does NOT support canvas.	
 		            </canvas>
                     <div id="sensor"></div>
-		            <!--<div id="tool" class="cursor"></div>-->
+		            <div id="tool" class="cursor"></div>
                 </td>
             </tr>
         </table>
