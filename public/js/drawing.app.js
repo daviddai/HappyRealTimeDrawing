@@ -50,7 +50,7 @@ $(document).ready(function() {
         if (mode == MODE_DRAW) {
 	        $("#tool").css("left", e.pageX - 6).css("top", e.pageY - 115);
         } else {
-            $("#tool").css("left", e.pageX - 6).css("top", e.pageY - 115);
+            $("#tool").css("left", e.pageX - 15).css("top", e.pageY - 15);
         }
     });
 
@@ -115,25 +115,35 @@ function clearWhiteBoard(requestType) {
 }
 
 function updateWhiteBoard(currentX, currentY) {
-    var ctx = document.getElementById("myWhiteBoard").getContext("2d");
-    
     if (isDrawing) {
-        if (lastX == -1 && lastY == -1) {
-            enqueue(lastX, lastY);
-            lastX = currentX - 1;
-            lastY = currentY - 1;
-            enqueue(lastX, lastY);
-        }
-        // record new coordinates
-        enqueue(currentX, currentY);
-        // draw new coordinates 
-        draw(ctx, lastX, lastY, currentX, currentY);
-        // update last coordinates
-        lastX = currentX;
-        lastY = currentY;
+        drawOnWhiteBoard(currentX, currentY);
     } else {
-        
+        eraseOnWhiteBoard(currentX, currentY);        
     }
+}
+
+function drawOnWhiteBoard(currentX, currentY) {
+    var ctx = document.getElementById("myWhiteBoard").getContext("2d");
+    if (lastX == -1 && lastY == -1) {
+        enqueue(lastX, lastY);
+        lastX = currentX - 1;
+        lastY = currentY - 1;
+        enqueue(lastX, lastY);
+    }
+    // record new coordinates
+    enqueue(currentX, currentY);
+    // draw new coordinates 
+    draw(ctx, lastX, lastY, currentX, currentY);
+    // update last coordinates
+    lastX = currentX;
+    lastY = currentY;
+}
+
+function eraseOnWhiteBoard(currentX, currentY) {
+   for (var i = currentX - 0.5; i >= currentX - 15; i -= 0.5) {
+       var erasedArea = [];
+         
+   }
 }
 
 function updateWhiteBoardFromServer(coordinates) {
