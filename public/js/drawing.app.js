@@ -4,7 +4,7 @@ var otherLastX = -1;
 var otherLastY = -1;
 var mode = MODE_DRAW;
 var isDrawing = false;
-var isEarsing = false;
+var isErasing = false;
 var queue = [];
 
 $(document).ready(function() {
@@ -29,7 +29,6 @@ $(document).ready(function() {
         // update mode
         isDrawing = (mode == MODE_DRAW);
         isErasing = !isDrawing;
-
         var coordinates = getCoordinates(e, "myWhiteBoard");
         updateWhiteBoard(coordinates[0], coordinates[1]);
     });
@@ -99,7 +98,7 @@ function reset() {
     lastY = -1;
     
     isDrawing = false;
-    isEarsing = false;
+    isErasing = false;
 }
 
 function clearWhiteBoard(requestType) {
@@ -115,15 +114,16 @@ function clearWhiteBoard(requestType) {
 }
 
 function updateWhiteBoard(currentX, currentY) {
+    var ctx = document.getElementById("myWhiteBoard").getContext("2d");
+
     if (isDrawing) {
-        drawOnWhiteBoard(currentX, currentY);
-    } else {
-        eraseOnWhiteBoard(currentX, currentY);        
+        drawOnWhiteBoard(currentX, currentY, ctx);
+    } else if (isErasing) {
+        eraseOnWhiteBoard(currentX, currentY, ctx);        
     }
 }
 
-function drawOnWhiteBoard(currentX, currentY) {
-    var ctx = document.getElementById("myWhiteBoard").getContext("2d");
+function drawOnWhiteBoard(currentX, currentY, ctx) {
     if (lastX == -1 && lastY == -1) {
         enqueue(lastX, lastY);
         lastX = currentX - 1;
@@ -139,11 +139,33 @@ function drawOnWhiteBoard(currentX, currentY) {
     lastY = currentY;
 }
 
-function eraseOnWhiteBoard(currentX, currentY) {
-   for (var i = currentX - 0.5; i >= currentX - 15; i -= 0.5) {
-       var erasedArea = [];
-         
+function eraseOnWhiteBoard(currentX, currentY, ctx) {
+   var erasedArea = [];
+
+   for (var offset = 0.1; offset <= 15; offset += 0.1) {
+       var coordinates = calculateDiagonalCoordinatesOfTwoEnds(currentX, currentY, offset);
+       
+       for (var i = 0; i < 2; ++i) {
+           ctx.clearRect(coordinates[i]['leftX'], coordinates[i]['leftY'], 
+                         coordinates[i]['rightX'], coordinates[i]['rightY']);
+       }
+
+       erasedArea.push(coordinates);
    }
+}
+
+function calculateDiagonalCoordinatesOfTwoEnds(centreX, centreY, offset) {
+    var height = Math.sqrt(Math.pow(15, 2) - Math.pow(offset, 2));
+    var upperArea = {
+        'leftX': centreX - offset, 'leftY': centreY - height, 
+        'rightX': centreX + offset, 'rightY': centreY - height + 0.1
+    };
+    var lowerArea = {
+        'leftX': centreX - offset, 'leftY': centreY + height,
+        'rightX': centreX + offset, 'rightY': centreY + height - 0.1
+    };
+    
+    return [upperArea, lowerArea];
 }
 
 function updateWhiteBoardFromServer(coordinates) {
