@@ -6,6 +6,7 @@ var mode = MODE_DRAW;
 var isDrawing = false;
 var isErasing = false;
 var queue = [];
+var erasedQueue = [];
 
 $(document).ready(function() {
     connectToServer();
@@ -33,15 +34,6 @@ $(document).ready(function() {
         updateWhiteBoard(coordinates[0], coordinates[1]);
     });
 
-    $("#tool").mousedown(function(e) {
-        /*isDrawing = (mode == MODE_DRAW);
-        isErasing = !isDrawing;
-        // calculate coordinates on white board
-        var x = e.pageX - $("#myWhiteBoard").offset().left;
-        var y = e.pageY - $("#myWhiteBoard").offset().top;
-        updateWhiteBoard(x, y); */
-    });
-
     $("#sensor").mousemove(function(e) {
         var coordinates = getCoordinates(e, "myWhiteBoard");
         updateWhiteBoard(coordinates[0], coordinates[1]);
@@ -51,16 +43,6 @@ $(document).ready(function() {
         } else {
             $("#tool").css("left", e.pageX - 15).css("top", e.pageY - 15);
         }
-    });
-
-    $("#tool").mousemove(function(e) {
-        /*var x = e.pageX - $("#myWhiteBoard").offset().left;
-        var y = e.pageY - $("#myWhiteBoard").offset().top;
-        updateWhiteBoard(x, y);
-        
-        if (mode == MODE_DRAW) {
-            $("#tool").css("left", e.pageX - 6).css("top", e.pageY - 115);
-        }*/
     });
 
     $("#sensor").mouseup(function(e) {
@@ -83,6 +65,14 @@ $(document).ready(function() {
            sendCoordinates(queue.slice(0, pivot));
            queue.splice(0, pivot);
        }
+    }, 100);
+
+    setInterval(function() {
+        var pivot = erasedQueue.length;
+        if (pivot > 0) {
+            sendErasedCoordinates(erasedQueue.slice(0, pivot));
+            erasedQueue.splice(0, pivot);
+        }
     }, 100);
 
 });
@@ -119,7 +109,7 @@ function updateWhiteBoard(currentX, currentY) {
     if (isDrawing) {
         drawOnWhiteBoard(currentX, currentY, ctx);
     } else if (isErasing) {
-        eraseOnWhiteBoard(currentX, currentY, ctx);        
+        eraseOnWhiteBoard(currentX, currentY, ctx, false);
     }
 }
 
@@ -139,37 +129,30 @@ function drawOnWhiteBoard(currentX, currentY, ctx) {
     lastY = currentY;
 }
 
-function eraseOnWhiteBoard(currentX, currentY, ctx) {
-   var erasedArea = [];
-
-   for (var offset = 0.1; offset <= 15; offset += 0.1) {
-       // calculate coordinates, width and height of rectangle
-       var rectangles = calculateDiagonalCoordinatesOfTwoEnds(currentX, currentY, offset);
-       
-       for (var i = 0; i < rectangles.length; ++i) {
-           var rect = rectangles[i];
-           // earse certain area
-           ctx.clearRect(rect['upperLeftCornerX'], rect['upperLeftCornerY'], rect['width'], rect['height']);
-           // record certain area has been earsed
-           erasedArea.push(rect);
-       }
-   }
+function eraseWhiteBoardFromServer(coordinates) {
+    var ctx = document.getElementById("myWhiteBoard").getContext("2d");
+    var coordinates = JSON.parse(coordinates);
+    for (var i = 0; i < coordinates.length; ++i) {
+        eraseOnWhiteBoard(coordinates[i]['x'], coordinates[i]['y'], ctx, true);    
+    }
 }
 
-function calculateDiagonalCoordinatesOfTwoEnds(centreX, centreY, offset) {
-    var height = Math.sqrt(Math.pow(15, 2) - Math.pow(offset, 2));
-
-    var upperRectangle = {
-        'upperLeftCornerX': centreX - offset, 'upperLeftCornerY': centreY - height, 
-        'width': 2 * offset, 'height':0.1
-    };
-
-    var lowerRectangle = {
-        'upperLeftCornerX': centreX - offset, 'upperLeftCornerY': centreY + height, 
-        'width': 2 * offset, 'height':0.1
-    };
+function eraseOnWhiteBoard(centreX, centreY, ctx, fromServer) {
+    console.log("(" + centreX + ", " + centreY + ")");
+    ctx.beginPath();
+    // specify the circle area where will be erased
+    ctx.arc(centreX, centreY, 15, 0, 2 * Math.PI);
+    // save current canvas or it cannot be restored later
+    ctx.save();
+    // put a mask on canvas
+    ctx.clip();
+    // erase the area within the clip
+    ctx.clearRect(centreX - 16, centreY - 16, 32, 32);
+    // restore canvas so that all area will be activated again
+    ctx.restore();
     
-    return [upperRectangle, lowerRectangle];
+    if (!fromServer)
+        erasedQueue.push({"x": centreX, 'y': centreY});
 }
 
 function updateWhiteBoardFromServer(coordinates) {

@@ -46,6 +46,17 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
+    socket.on('erasedCoordinates', function(coordinates) {
+        clients.forEach(function(client) {
+            if (client != socket) {
+                console.log("Server Log: About to erase other's white board");
+                console.log(coordinates);
+                client.emit('erasedCoordinates', coordinates);
+            }
+        });
+
+    });
+
     socket.on('clear', function() {
         history = [];
 

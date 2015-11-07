@@ -11,6 +11,10 @@ function connectToServer() {
         updateWhiteBoardFromServer(coordinates);
     });
 
+    socket.on('erasedCoordinates', function(coordinates) {
+        eraseWhiteBoardFromServer(coordinates);
+    });
+
     socket.on('clear', function() {
         clearWhiteBoard(SERVER_REQUEST);       
     });
@@ -22,6 +26,10 @@ function connectToServer() {
 
 function sendCoordinates(coordinates) {
     socket.emit('coordinates', JSON.stringify(coordinates));
+}
+
+function sendErasedCoordinates(coordinates) {
+    socket.emit('erasedCoordinates', JSON.stringify(coordinates));
 }
 
 function sendClearRequest() {
