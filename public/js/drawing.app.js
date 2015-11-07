@@ -143,29 +143,33 @@ function eraseOnWhiteBoard(currentX, currentY, ctx) {
    var erasedArea = [];
 
    for (var offset = 0.1; offset <= 15; offset += 0.1) {
-       var coordinates = calculateDiagonalCoordinatesOfTwoEnds(currentX, currentY, offset);
+       // calculate coordinates, width and height of rectangle
+       var rectangles = calculateDiagonalCoordinatesOfTwoEnds(currentX, currentY, offset);
        
-       for (var i = 0; i < 2; ++i) {
-           ctx.clearRect(coordinates[i]['leftX'], coordinates[i]['leftY'], 
-                         coordinates[i]['rightX'], coordinates[i]['rightY']);
+       for (var i = 0; i < rectangles.length; ++i) {
+           var rect = rectangles[i];
+           // earse certain area
+           ctx.clearRect(rect['upperLeftCornerX'], rect['upperLeftCornerY'], rect['width'], rect['height']);
+           // record certain area has been earsed
+           erasedArea.push(rect);
        }
-
-       erasedArea.push(coordinates);
    }
 }
 
 function calculateDiagonalCoordinatesOfTwoEnds(centreX, centreY, offset) {
     var height = Math.sqrt(Math.pow(15, 2) - Math.pow(offset, 2));
-    var upperArea = {
-        'leftX': centreX - offset, 'leftY': centreY - height, 
-        'rightX': centreX + offset, 'rightY': centreY - height + 0.1
+
+    var upperRectangle = {
+        'upperLeftCornerX': centreX - offset, 'upperLeftCornerY': centreY - height, 
+        'width': 2 * offset, 'height':0.1
     };
-    var lowerArea = {
-        'leftX': centreX - offset, 'leftY': centreY + height,
-        'rightX': centreX + offset, 'rightY': centreY + height - 0.1
+
+    var lowerRectangle = {
+        'upperLeftCornerX': centreX - offset, 'upperLeftCornerY': centreY + height, 
+        'width': 2 * offset, 'height':0.1
     };
     
-    return [upperArea, lowerArea];
+    return [upperRectangle, lowerRectangle];
 }
 
 function updateWhiteBoardFromServer(coordinates) {
